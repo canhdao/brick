@@ -3,11 +3,20 @@ private static var controller : GameObject = null;
 private var MAX_VELOCITY : float = 4000;
 static var RIGHT_EDGE = 1000;
 static var TOP_EDGE = 1000;
+private var stuck = false;
 
 function Start() {
 	if (controller == null) {
 		controller = GameObject.Find("Controller");
 	}
+}
+
+function Reset() {
+	stuck = false;
+}
+
+function IsStuck() {
+	return stuck;
 }
 
 function Update() {
@@ -33,8 +42,14 @@ function Update() {
 		
 		if (transform.position.x < left   || transform.position.x > right
 		||  transform.position.y < bottom || transform.position.y > top) {
-			SCR_Gameplay.Lose(1);
+			stuck = true;
 		}
+		else {
+			stuck = false;
+		}
+	}
+	else {
+		stuck = false;
 	}
 }
 

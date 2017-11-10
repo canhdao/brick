@@ -2,6 +2,7 @@ var PREFAB_BRICK : GameObject;
 var PREFAB_CONTROL_ZONE : GameObject;
 var MAT_BRICK : Material[];
 var PREFAB_BALL : GameObject;
+var CORNER_LENGTH : int = 5;
 
 static var LOSE_TEXT : UI.Text = null;
 static var TAP_TEXT : UI.Text = null;
@@ -17,9 +18,20 @@ var bricks = new Array();
 var balls = new Array();
 var controller : GameObject;
 var firstTime = true;
+
+static var currentLevel = 1;
 static var tapToReset = false;
+static var tapNextLevel = false;
+
+private var lastMouseX = 0;
+private var lastMouseY = 0;
+private var targetX = 0;
+private var targetY = 0;
 
 function Start() {
+	Application.targetFrameRate = 60;
+	Screen.orientation = ScreenOrientation.Portrait;
+	
 	// Setup pixel perfect 2D camera thingy
 	Camera.main.orthographicSize = Screen.height * 500 / Screen.width;
 	Camera.main.transform.position.x = 500;
@@ -31,33 +43,57 @@ function Start() {
 	SCR_Ball.RIGHT_EDGE = 1000;
 	SCR_Ball.TOP_EDGE = 1000 * Screen.height / Screen.width;
 	
-	Reset();
+	LOSE_TEXT = GameObject.Find("LoseText").GetComponent(UI.Text);
+	TAP_TEXT = GameObject.Find("TapText").GetComponent(UI.Text);
+	LOSE_TEXT.enabled = false;
+	TAP_TEXT.enabled = false;
+	
+	
+	currentLevel = 1;
+	Reset(currentLevel);
 }
 
-function Reset() {
+function Reset(level : int) {
 	for (var i=0; i<bricks.length; i++) {
 		(bricks[i] as GameObject).SetActive(false);
 	}
-	CreateMap();
+	CreateMap(level);
 	
 	for (i=0; i<balls.length; i++) {
 		(balls[i] as GameObject).SetActive(false);
 	}
-	CreateBall();
 	
-	controller.GetComponent(SCR_Controller).SetTargetPosition (500, 500 * Screen.height / Screen.width);
-	controller.transform.position.x = 500;
-	controller.transform.position.y = 500 * Screen.height / Screen.width;
+	if (level == 1) {
+		CreateBall(500, 650 * Screen.height / Screen.width);
+	}
+	else if (level == 2) {
+		CreateBall(500, 650 * Screen.height / Screen.width);
+		CreateBall(500, 350 * Screen.height / Screen.width);
+	}
+	else if (level == 3) {
+		CreateBall(350, 650 * Screen.height / Screen.width);
+		CreateBall(650, 650 * Screen.height / Screen.width);
+		CreateBall(500, 350 * Screen.height / Screen.width);
+	}
+	else if (level == 4) {
+		CreateBall(350, 650 * Screen.height / Screen.width);
+		CreateBall(650, 650 * Screen.height / Screen.width);
+		CreateBall(350, 350 * Screen.height / Screen.width);
+		CreateBall(650, 350 * Screen.height / Screen.width);
+	}
+	
+	targetX = 500;
+	targetY = 500 * Screen.height / Screen.width;
+	controller.GetComponent(SCR_Controller).SetTargetPosition (targetX, targetY);
+	controller.transform.position.x = targetX;
+	controller.transform.position.y = targetY;
 	controller.transform.position.z = -1;
 	controller.transform.localScale.x = BRICK_SIZE * 5;
 	controller.transform.localScale.y = BRICK_SIZE * 5;
 	
-	if (LOSE_TEXT == null) {
-		LOSE_TEXT = GameObject.Find("LoseText").GetComponent(UI.Text);
-		LOSE_TEXT.enabled = false;
-		TAP_TEXT = GameObject.Find("TapText").GetComponent(UI.Text);
-		TAP_TEXT.enabled = false;
-	}
+	lastMouseX = -1;
+	lastMouseY = -1;
+	
 	
 	if (firstTime) {
 		CreateControlZone();
@@ -65,7 +101,7 @@ function Reset() {
 	}
 }
 
-function CreateBall() {
+function CreateBall(x, y) {
 	var ball : GameObject = null;
 	for (var i=0; i<balls.length; i++) {
 		if ((balls[i] as GameObject).activeSelf == false) {
@@ -79,16 +115,17 @@ function CreateBall() {
 		balls.Push (ball);
 	}
 	
-	ball.transform.position.x = 500;
-	ball.transform.position.y = 750 * Screen.height / Screen.width;
+	ball.transform.position.x = x;
+	ball.transform.position.y = y;
 	ball.transform.position.z = -1;
 	ball.transform.localScale.x = BRICK_SIZE * 2.5;
 	ball.transform.localScale.y = BRICK_SIZE * 2.5;
 	
+	ball.GetComponent(SCR_Ball).Reset();
 	ball.SetActive(true);
 }
 
-function CreateBrick (x:float, y:float, w:float, h:float, destructible:boolean, color:int) {
+function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 	var brick : GameObject = null;
 	for (var i=0; i<bricks.length; i++) {
 		if ((bricks[i] as GameObject).activeSelf == false) {
@@ -110,7 +147,13 @@ function CreateBrick (x:float, y:float, w:float, h:float, destructible:boolean, 
 	brick.transform.position.x = (x + w * 0.5) * BRICK_SIZE;
 	brick.transform.position.y = (y + h * 0.5) * BRICK_SIZE;
 	
+	var destructible = false;
+	if (hp > 0) {
+		destructible = true;
+	}
+	
 	brick.GetComponent(SCR_Brick).SetDestructible (destructible);
+	brick.GetComponent(SCR_Brick).SetHP (hp);
 	
 	if (destructible) {
 		brick.transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[color];
@@ -123,46 +166,51 @@ function CreateBrick (x:float, y:float, w:float, h:float, destructible:boolean, 
 	return brick;
 }
 
-function CreateMap(){
+function CreateMap(level : int){
+	if (level > 4) {
+		level = 4;
+	}
+	
 	// Bottom left
-	CreateBrick(0, 0, 3, 1, false, 0);
-	CreateBrick(0, 0, 1, 3, false, 0);
+	CreateBrick(0, 0, CORNER_LENGTH, 1, 0, 0);
+	CreateBrick(0, 0, 1, CORNER_LENGTH, 0, 0);
 	
 	// Bottom right
-	CreateBrick(BRICK_W - 3, 0, 3, 1, false, 0);
-	CreateBrick(BRICK_W - 1, 0, 1, 3, false, 0);
+	CreateBrick(BRICK_W - CORNER_LENGTH, 0, CORNER_LENGTH, 1, 0, 0);
+	CreateBrick(BRICK_W - 1, 0, 1, CORNER_LENGTH, 0, 0);
 	
 	// Top left
-	CreateBrick(0, BRICK_H - 1, 3, 1, false, 0);
-	CreateBrick(0, BRICK_H - 3, 1, 3, false, 0);
+	CreateBrick(0, BRICK_H - 1, CORNER_LENGTH, 1, 0, 0);
+	CreateBrick(0, BRICK_H - CORNER_LENGTH, 1, CORNER_LENGTH, 0, 0);
 	
 	// Bottom right
-	CreateBrick(BRICK_W - 3, BRICK_H - 1, 3, 1, false, 0);
-	CreateBrick(BRICK_W - 1, BRICK_H - 3, 1, 3, false, 0);
+	CreateBrick(BRICK_W - CORNER_LENGTH, BRICK_H - 1, CORNER_LENGTH, 1, 0, 0);
+	CreateBrick(BRICK_W - 1, BRICK_H - CORNER_LENGTH, 1, CORNER_LENGTH, 0, 0);
 	
 	// Fill 6 rows
-	CreateMapFillRow (0);
-	CreateMapFillRow (1);
-	CreateMapFillRow (2);
-	CreateMapFillRow (BRICK_H-1);
-	CreateMapFillRow (BRICK_H-2);
-	CreateMapFillRow (BRICK_H-3);
+	CreateMapFillRow (level, 0);
+	CreateMapFillRow (level, 1);
+	CreateMapFillRow (level, 2);
+	CreateMapFillRow (level, BRICK_H-1);
+	CreateMapFillRow (level, BRICK_H-2);
+	CreateMapFillRow (level, BRICK_H-3);
+	
 	
 	// Fill 6 columns
-	CreateMapFillColumn (0);
-	CreateMapFillColumn (1);
-	CreateMapFillColumn (2);
-	CreateMapFillColumn (BRICK_W - 1);
-	CreateMapFillColumn (BRICK_W - 2);
-	CreateMapFillColumn (BRICK_W - 3);
+	CreateMapFillColumn (level, 0);
+	CreateMapFillColumn (level, 1);
+	CreateMapFillColumn (level, 2);
+	CreateMapFillColumn (level, BRICK_W - 1);
+	CreateMapFillColumn (level, BRICK_W - 2);
+	CreateMapFillColumn (level, BRICK_W - 3);
 }
 
-function CreateMapFillRow(row) {
+function CreateMapFillRow(level:int, row:int) {
 	var finished = false;
 	var index = 0;
 	
 	if (row == 0 || row == BRICK_H-1) {
-		index = 3;
+		index = CORNER_LENGTH;
 	}
 	else if (row == 1 || row == BRICK_H-2) {
 		index = 1;
@@ -188,12 +236,12 @@ function CreateMapFillRow(row) {
 			}
 		}
 		
-		createdBrick.push (CreateBrick(index, row, length, 1, true, color));
+		createdBrick.push (CreateBrick(index, row, length, 1, level, color));
 		index += length;
 
 		if (maxW - index < BRICK_MAX_LENGTH) {
 			color = Random.Range(1, MAT_BRICK.length);
-			createdBrick.push (CreateBrick(index, row, maxW - index, 1, true, color));
+			createdBrick.push (CreateBrick(index, row, maxW - index, 1, level, color));
 			finished = true;
 		}
 	}
@@ -204,12 +252,12 @@ function CreateMapFillRow(row) {
 	}
 }
 
-function CreateMapFillColumn(col) {
+function CreateMapFillColumn(level:int, col:int) {
 	var finished = false;
 	var index = 0;
 	
 	if (col == 0 || col == BRICK_W - 1) {
-		index = 3;
+		index = CORNER_LENGTH;
 	}
 	else if (col == 1 || col == BRICK_W - 2) {
 		index = 2;
@@ -235,12 +283,12 @@ function CreateMapFillColumn(col) {
 			}
 		}
 		
-		createdBrick.push(CreateBrick(col, index, 1, length, true, color));
+		createdBrick.push(CreateBrick(col, index, 1, length, level, color));
 		index += length;
 		
 		if (maxH - index < BRICK_MAX_LENGTH) {
 			color = Random.Range(1, MAT_BRICK.length);
-			createdBrick.push(CreateBrick(col, index, 1, maxH - index, true, color));
+			createdBrick.push(CreateBrick(col, index, 1, maxH - index, level, color));
 			finished = true;
 		}
 	}
@@ -278,21 +326,72 @@ static function GetControlZone() {
 	return [x, y, w, h];
 }
 
-
-
 function Update() {
 	var dt = Time.deltaTime;
 	
+	var result = ConvertScreenCoordToGameCoord(Input.mousePosition.x, Input.mousePosition.y);
+	
 	if (Input.GetMouseButton(0)) {
-		var result = ConvertScreenCoordToGameCoord(Input.mousePosition.x, Input.mousePosition.y);
-		var targetX = result[0];
-		var targetY = result[1];
+		if (lastMouseX != -1 && lastMouseY != -1) {
+			targetX += result[0] - lastMouseX;
+			targetY += result[1] - lastMouseY;
+		}
+		lastMouseX = result[0];
+		lastMouseY = result[1];
+		
+		var zoneX = SCR_Controller.CONTROL_ZONE_MARGIN * BRICK_SIZE;
+		var zoneY = SCR_Controller.CONTROL_ZONE_MARGIN * BRICK_SIZE;
+		var zoneW = (BRICK_W - 2 * SCR_Controller.CONTROL_ZONE_MARGIN) * BRICK_SIZE;
+		var zoneH = (BRICK_H - 2 * SCR_Controller.CONTROL_ZONE_MARGIN) * BRICK_SIZE;
+		
+		if (targetX < zoneX) {targetX = zoneX;}
+		if (targetX > zoneX + zoneW) {targetX = zoneX + zoneW;}
+		if (targetY < zoneY) {targetY = zoneY;}
+		if (targetY > zoneY + zoneH) {targetY = zoneY + zoneH;}
 		
 		controller.GetComponent(SCR_Controller).SetTargetPosition(targetX, targetY);
 	}
 	
+	lastMouseX = result[0];
+	lastMouseY = result[1];
+	
+	
+	if (tapToReset == false) {
+		// Check stuck
+		var stuck = true;
+		for (var i=0; i<balls.length; i++) {
+			if ((balls[i] as GameObject).activeSelf == true && (balls[i] as GameObject).GetComponent(SCR_Ball).IsStuck() == false) {
+				stuck = false;
+				break;
+			}
+		}
+		if (stuck) {
+			Lose(1);
+		}
+		
+		// Check bricks
+		var win = true;
+		for (i=0; i<bricks.length; i++) {
+			if ((bricks[i] as GameObject).activeSelf == true && (bricks[i] as GameObject).GetComponent(SCR_Brick).IsDestructible() == true) {
+				win = false;
+				break;
+			}
+		}
+		
+		if (win) {
+			Win();
+		}
+	}
+	
 	if (tapToReset == true && Input.GetMouseButtonDown(0)) {
-		Reset();
+		if (tapNextLevel) {
+			currentLevel ++;
+		}
+		else {
+			currentLevel = 1;
+		}
+		Reset(currentLevel);
+		
 		LOSE_TEXT.enabled = false;
 		TAP_TEXT.enabled = false;
 		tapToReset = false;
@@ -307,16 +406,28 @@ function ConvertScreenCoordToGameCoord (x:float, y:float) {
 }
 
 
-
+static function Win () {
+	LOSE_TEXT.enabled = true;
+	LOSE_TEXT.text = "Oh, nice! Next level!";
+	TAP_TEXT.enabled = true;
+	TAP_TEXT.text = "Tap to start!";
+	
+	tapToReset = true;
+	tapNextLevel = true;
+}
 
 static function Lose (reason) {
-	LOSE_TEXT.enabled = true;
-	if (reason == 0) {
-		LOSE_TEXT.text = "You lose your ball!";
+	if (tapToReset == false) {
+		LOSE_TEXT.enabled = true;
+		if (reason == 0) {
+			LOSE_TEXT.text = "You lose your ball!";
+		}
+		else if (reason == 1) {
+			LOSE_TEXT.text = "Hey, your ball seems stuck!";
+		}
+		TAP_TEXT.enabled = true;
+		TAP_TEXT.text = "Tap to reset!";
+		tapToReset = true;
+		tapNextLevel = false;
 	}
-	else if (reason == 1) {
-		LOSE_TEXT.text = "Hey, your ball seems stuck!";
-	}
-	TAP_TEXT.enabled = true;
-	tapToReset = true;
 }

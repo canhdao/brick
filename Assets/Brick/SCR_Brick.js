@@ -11,6 +11,13 @@ function SetDestructible(d) {
 	destructible = d;
 	blinkCooldown = 0;
 }
+function SetHP(hp : int) {
+	HP = hp;
+}
+
+function IsDestructible() {
+	return destructible;
+}
 
 function Start() {
 	
