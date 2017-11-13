@@ -28,20 +28,43 @@ private var lastMouseY = 0;
 private var targetX = 0;
 private var targetY = 0;
 
+static var verticalScreen = true;
+static var screenRatio : float = 1;
+
 function Start() {
 	Application.targetFrameRate = 60;
 	Screen.orientation = ScreenOrientation.Portrait;
 	
 	// Setup pixel perfect 2D camera thingy
-	Camera.main.orthographicSize = Screen.height * 500 / Screen.width;
-	Camera.main.transform.position.x = 500;
-	Camera.main.transform.position.y = 500 * Screen.height / Screen.width;
+	if (Screen.height > Screen.width) {
+		verticalScreen = true;
+		screenRatio = Screen.height * 1.0 / Screen.width;
+		Camera.main.orthographicSize = 500 * screenRatio;
+	}
+	else {
+		verticalScreen = false;
+		screenRatio = Screen.width * 1.0 / Screen.height;
+		Camera.main.orthographicSize = 500;
+	}
 	
-	BRICK_W = 1000 / BRICK_SIZE;
-	BRICK_H = BRICK_W * Screen.height / Screen.width;
+	if (verticalScreen) {
+		Camera.main.transform.position.x = 500;
+		Camera.main.transform.position.y = 500 * screenRatio;
+		BRICK_W = 1000 / BRICK_SIZE;
+		BRICK_H = BRICK_W * screenRatio;
+		SCR_Ball.RIGHT_EDGE = 1000;
+		SCR_Ball.TOP_EDGE = 1000 * screenRatio;
+	}
+	else {
+		Camera.main.transform.position.x = 500 * screenRatio;
+		Camera.main.transform.position.y = 500;
+		BRICK_H = 1000 / BRICK_SIZE;
+		BRICK_W = BRICK_H * screenRatio;
+		SCR_Ball.RIGHT_EDGE = 1000 * screenRatio;
+		SCR_Ball.TOP_EDGE = 1000;
+	}
 	
-	SCR_Ball.RIGHT_EDGE = 1000;
-	SCR_Ball.TOP_EDGE = 1000 * Screen.height / Screen.width;
+	
 	
 	LOSE_TEXT = GameObject.Find("LoseText").GetComponent(UI.Text);
 	TAP_TEXT = GameObject.Find("TapText").GetComponent(UI.Text);
@@ -62,28 +85,54 @@ function Reset(level : int) {
 	for (i=0; i<balls.length; i++) {
 		(balls[i] as GameObject).SetActive(false);
 	}
+	if (verticalScreen) {
+		if (level == 1) {
+			CreateBall(500, 650 * screenRatio);
+		}
+		else if (level == 2) {
+			CreateBall(500, 650 * screenRatio);
+			CreateBall(500, 350 * screenRatio);
+		}
+		else if (level == 3) {
+			CreateBall(350, 650 * screenRatio);
+			CreateBall(650, 650 * screenRatio);
+			CreateBall(500, 350 * screenRatio);
+		}
+		else if (level == 4) {
+			CreateBall(350, 650 * screenRatio);
+			CreateBall(650, 650 * screenRatio);
+			CreateBall(350, 350 * screenRatio);
+			CreateBall(650, 350 * screenRatio);
+		}
+		
+		targetX = 500;
+		targetY = 500 * screenRatio;
+	}
+	else {
+		if (level == 1) {
+			CreateBall(650 * screenRatio, 500);
+		}
+		else if (level == 2) {
+			CreateBall(650 * screenRatio, 500);
+			CreateBall(350 * screenRatio, 500);
+		}
+		else if (level == 3) {
+			CreateBall(650 * screenRatio, 350);
+			CreateBall(650 * screenRatio, 650);
+			CreateBall(350 * screenRatio, 500);
+		}
+		else if (level == 4) {
+			CreateBall(650 * screenRatio, 350);
+			CreateBall(650 * screenRatio, 650);
+			CreateBall(350 * screenRatio, 350);
+			CreateBall(350 * screenRatio, 650);
+		}
+		
+		targetX = 500 * screenRatio;
+		targetY = 500;
+	}
 	
-	if (level == 1) {
-		CreateBall(500, 650 * Screen.height / Screen.width);
-	}
-	else if (level == 2) {
-		CreateBall(500, 650 * Screen.height / Screen.width);
-		CreateBall(500, 350 * Screen.height / Screen.width);
-	}
-	else if (level == 3) {
-		CreateBall(350, 650 * Screen.height / Screen.width);
-		CreateBall(650, 650 * Screen.height / Screen.width);
-		CreateBall(500, 350 * Screen.height / Screen.width);
-	}
-	else if (level == 4) {
-		CreateBall(350, 650 * Screen.height / Screen.width);
-		CreateBall(650, 650 * Screen.height / Screen.width);
-		CreateBall(350, 350 * Screen.height / Screen.width);
-		CreateBall(650, 350 * Screen.height / Screen.width);
-	}
 	
-	targetX = 500;
-	targetY = 500 * Screen.height / Screen.width;
 	controller.GetComponent(SCR_Controller).SetTargetPosition (targetX, targetY);
 	controller.transform.position.x = targetX;
 	controller.transform.position.y = targetY;
@@ -351,9 +400,11 @@ function Update() {
 		
 		controller.GetComponent(SCR_Controller).SetTargetPosition(targetX, targetY);
 	}
+	else {
+		lastMouseX = -1;
+		lastMouseY = -1;
+	}
 	
-	lastMouseX = result[0];
-	lastMouseY = result[1];
 	
 	
 	if (tapToReset == false) {
@@ -399,8 +450,17 @@ function Update() {
 }
 
 function ConvertScreenCoordToGameCoord (x:float, y:float) {
-	var realX = x * 1000 / Screen.width;
-	var realY = y * (1000 * Screen.height / Screen.width) / Screen.height;
+	var realX = 0;
+	var realY = 0;
+	
+	if (verticalScreen) {
+		realX = x * 1000 / Screen.width;
+		realY = y * (1000 * screenRatio) / Screen.height;
+	}
+	else {
+		realX = x * (1000 * screenRatio) / Screen.width;
+		realY = y * 1000 / Screen.height;
+	}
 	
 	return [realX, realY];
 }

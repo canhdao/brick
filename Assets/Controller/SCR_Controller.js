@@ -1,6 +1,6 @@
 static var CONTROL_ZONE_MARGIN = 6;
 
-private var SPEED_MULTIPLIER = 25;
+private var SPEED_MULTIPLIER = 40;
 private var MIN_SPEED = 50;
 
 private var targetX:float = 0;
