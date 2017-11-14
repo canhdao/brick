@@ -1,8 +1,12 @@
 var PREFAB_BRICK : GameObject;
+var PREFAB_BACKGROUND : GameObject;
 var PREFAB_CONTROL_ZONE : GameObject;
 var MAT_BRICK : Material[];
 var MAT_WHITE : Material;
 var PREFAB_BALL : GameObject;
+
+var TEX_BACKGROUND : Sprite[];
+
 var CORNER_LENGTH : int = 5;
 
 static var LOSE_TEXT : UI.Text = null;
@@ -12,9 +16,14 @@ static var BRICK_SIZE : int = 40;
 static var BRICK_W : int = 0;
 static var BRICK_H : int = 0;
 
+static var BACKGROUND_SIZE : int = 100;
+static var BACKGROUND_W : int = 0;
+static var BACKGROUND_H : int = 0;
+
 static var BRICK_MIN_LENGTH = 3;
 static var BRICK_MAX_LENGTH = 8;
 
+var background : Array = new Array();
 var bricks = new Array();
 var balls = new Array();
 var controller : GameObject;
@@ -33,7 +42,6 @@ static var verticalScreen = true;
 static var screenRatio : float = 1;
 
 function Start() {
-	Debug.Log(SCR_Global.gameMode);
 	Application.targetFrameRate = 60;
 	Screen.orientation = ScreenOrientation.Portrait;
 	
@@ -54,6 +62,8 @@ function Start() {
 		Camera.main.transform.position.y = 500 * screenRatio;
 		BRICK_W = 1000 / BRICK_SIZE;
 		BRICK_H = BRICK_W * screenRatio;
+		BACKGROUND_W = 1000 / BACKGROUND_SIZE;
+		BACKGROUND_H = BACKGROUND_W * screenRatio;
 		SCR_Ball.RIGHT_EDGE = 1000;
 		SCR_Ball.TOP_EDGE = 1000 * screenRatio;
 	}
@@ -62,14 +72,33 @@ function Start() {
 		Camera.main.transform.position.y = 500;
 		BRICK_H = 1000 / BRICK_SIZE;
 		BRICK_W = BRICK_H * screenRatio;
+		BACKGROUND_H = 1000 / BACKGROUND_SIZE;
+		BACKGROUND_W = BACKGROUND_H * screenRatio;
 		SCR_Ball.RIGHT_EDGE = 1000 * screenRatio;
 		SCR_Ball.TOP_EDGE = 1000;
 	}
 	
-	
 	var score = GameObject.Find("Score");
 	score.transform.position.x = Camera.main.transform.position.x;
 	score.transform.position.y = Camera.main.transform.position.y;
+	
+	var BACKGROUND_SCALE = 0.5;
+	for (var i:int=0; i<BACKGROUND_W; i++) {
+		var temp : Array = new Array();
+		for (var j:int=0; j<BACKGROUND_H; j++) {
+			temp[j] = Instantiate(PREFAB_BACKGROUND);
+			(temp[j] as GameObject).transform.localScale.x = BACKGROUND_SIZE * BACKGROUND_SCALE;
+			(temp[j] as GameObject).transform.localScale.y = BACKGROUND_SIZE * BACKGROUND_SCALE;
+			(temp[j] as GameObject).transform.position.x = (i + 0.5) * BACKGROUND_SIZE;
+			(temp[j] as GameObject).transform.position.y = (j + 0.5) * BACKGROUND_SIZE;
+			
+			
+			var texture = Random.Range(0, TEX_BACKGROUND.length - 1);
+			(temp[j] as GameObject).GetComponent(SpriteRenderer).sprite = TEX_BACKGROUND[texture];
+		}
+		background[i] = temp;
+	}
+	
 	
 	
 	LOSE_TEXT = GameObject.Find("LoseText").GetComponent(UI.Text);
@@ -86,7 +115,13 @@ function Start() {
 }
 
 function Reset(level : int) {
-	for (var i=0; i<bricks.length; i++) {
+	for (var i:int=0; i<BACKGROUND_W; i++) {
+		for (var j:int=0; j<BACKGROUND_H; j++) {
+			((background[i] as Array)[j] as GameObject).GetComponent(SCR_Background).SetColor(MAT_WHITE, ((background[i] as Array).length - j + i) * 0.02);
+		}
+	}
+	
+	for (i=0; i<bricks.length; i++) {
 		(bricks[i] as GameObject).SetActive(false);
 	}
 	CreateMap(level);
@@ -154,7 +189,7 @@ function Reset(level : int) {
 	
 	
 	if (firstTime) {
-		CreateControlZone();
+		//CreateControlZone();
 		firstTime = false;
 	}
 }
@@ -180,6 +215,7 @@ function CreateBall(x, y) {
 	ball.transform.localScale.y = BRICK_SIZE * 0.6;
 	
 	ball.GetComponent(SCR_Ball).Reset();
+	ball.GetComponent(SCR_Ball).SetBackground(background);
 	ball.SetActive(true);
 }
 

@@ -562,6 +562,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PREFAB_BRICK: {fileID: 1169695615125408, guid: f68aeb1fd67c4a64ebbe1e4d75bb99a0,
     type: 2}
+  PREFAB_BACKGROUND: {fileID: 1926722159736606, guid: f0910a4838cf54f4bbe46ab369c5583c,
+    type: 2}
   PREFAB_CONTROL_ZONE: {fileID: 1169695615125408, guid: d2eef71eb645ec848a8a7437a46bda77,
     type: 2}
   MAT_BRICK:
@@ -575,6 +577,12 @@ MonoBehaviour:
   MAT_WHITE: {fileID: 2100000, guid: 19e2da416ccca1f4c856b0362e3401e8, type: 2}
   PREFAB_BALL: {fileID: 1708904618651628, guid: fa889dcd89bfaf343bb78ad3e970890f,
     type: 2}
+  TEX_BACKGROUND:
+  - {fileID: 21300000, guid: db49c63914b255a4d8363ad7ac7270ce, type: 3}
+  - {fileID: 21300000, guid: 3a37207c7440a6f40bbce186f26cc8f5, type: 3}
+  - {fileID: 21300000, guid: 5c6925e2db7f18344bbefc414440a5c7, type: 3}
+  - {fileID: 21300000, guid: 4ff65e976f855b34397ee29e7f999847, type: 3}
+  - {fileID: 21300000, guid: 7f39ef73d7acd924cac2d592ae40a2f7, type: 3}
   CORNER_LENGTH: 5
   controller: {fileID: 191092816}
   firstTime: 1
@@ -872,8 +880,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1878012803}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 208, y: 369.5, z: 0}
-  m_LocalScale: {x: 0.5544583, y: 0.5544583, z: 0.5544583}
+  m_LocalPosition: {x: 241, y: 419, z: 0}
+  m_LocalScale: {x: 0.6355439, y: 0.6355439, z: 0.6355439}
   m_Children:
   - {fileID: 32548699}
   - {fileID: 1425211943}

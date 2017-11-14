@@ -1,8 +1,12 @@
+var MAT_WHITE : Material;
+
 private static var controller : GameObject = null;
 
 private var MAX_VELOCITY : float = 4000;
 static var RIGHT_EDGE = 1000;
 static var TOP_EDGE = 1000;
+
+private var background : Array = null;
 private var stuck = false;
 
 function Start() {
@@ -13,6 +17,10 @@ function Start() {
 
 function Reset() {
 	stuck = false;
+}
+
+function SetBackground(bg:Array) {
+	background = bg;
 }
 
 function IsStuck() {
@@ -58,6 +66,14 @@ function OnCollisionEnter2D(collision: Collision2D) {
 		
 	}
 	else if (collision.gameObject.tag == "Brick") {
+		if (collision.gameObject.GetComponent(SCR_Brick).IsDestructible()) {
+			var mat:Material = collision.gameObject.transform.GetChild(0).GetComponent(Renderer).material;
+			for (var i=0; i<background.length; i++) {
+				for (var j=0; j<(background[i] as Array).length; j++) {
+					((background[i] as Array)[j] as GameObject).GetComponent(SCR_Background).SetColor(mat, ((background[i] as Array).length - j + i) * 0.02);
+				}
+			}
+		}
 		collision.gameObject.GetComponent(SCR_Brick).Hit(1);
 	}
 	
