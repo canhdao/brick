@@ -33,6 +33,7 @@ static var verticalScreen = true;
 static var screenRatio : float = 1;
 
 function Start() {
+	Debug.Log(SCR_Global.gameMode);
 	Application.targetFrameRate = 60;
 	Screen.orientation = ScreenOrientation.Portrait;
 	
@@ -79,6 +80,9 @@ function Start() {
 	
 	currentLevel = 1;
 	Reset(currentLevel);
+	
+	tapToReset = false;
+	tapNextLevel = false;
 }
 
 function Reset(level : int) {
@@ -485,17 +489,17 @@ function Update() {
 	if (tapToReset == true && Input.GetMouseButtonDown(0)) {
 		if (tapNextLevel) {
 			currentLevel ++;
+			Reset(currentLevel);
+			
+			LOSE_TEXT.enabled = false;
+			TAP_TEXT.enabled = false;
+			tapToReset = false;
+			
+			GameObject.Find("Score").GetComponent(SCR_Score).ResetScore();
 		}
 		else {
-			currentLevel = 1;
+			SceneManagement.SceneManager.LoadScene("MainMenu");
 		}
-		Reset(currentLevel);
-		
-		LOSE_TEXT.enabled = false;
-		TAP_TEXT.enabled = false;
-		tapToReset = false;
-		
-		GameObject.Find("Score").GetComponent(SCR_Score).ResetScore();
 	}
 }
 
