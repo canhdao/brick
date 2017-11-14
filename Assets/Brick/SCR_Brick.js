@@ -1,4 +1,4 @@
-var WHITE_MATERIAL : Material;
+var MAT_WHITE : Material;
 
 private var destructible:boolean = true;
 private var color:int = 0;
@@ -30,6 +30,8 @@ function Update() {
 		blinkCooldown -= dt;
 		if (blinkCooldown < 0) {
 			transform.GetChild(0).GetComponent(Renderer).material = currentMaterial;
+			transform.GetChild(1).GetComponent(Renderer).material = currentMaterial;
+			transform.GetChild(2).GetComponent(Renderer).material = currentMaterial;
 			blinkCooldown = 0;
 		}
 	}
@@ -41,7 +43,9 @@ function Hit(damage:int) {
 		
 		if (blinkCooldown == 0) {
 			currentMaterial = transform.GetChild(0).GetComponent(Renderer).material;
-			transform.GetChild(0).GetComponent(Renderer).material = WHITE_MATERIAL;
+			transform.GetChild(0).GetComponent(Renderer).material = MAT_WHITE;
+			transform.GetChild(1).GetComponent(Renderer).material = MAT_WHITE;
+			transform.GetChild(2).GetComponent(Renderer).material = MAT_WHITE;
 		}
 		
 		blinkCooldown = 0.1;

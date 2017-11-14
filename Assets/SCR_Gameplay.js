@@ -1,6 +1,7 @@
 var PREFAB_BRICK : GameObject;
 var PREFAB_CONTROL_ZONE : GameObject;
 var MAT_BRICK : Material[];
+var MAT_WHITE : Material;
 var PREFAB_BALL : GameObject;
 var CORNER_LENGTH : int = 5;
 
@@ -137,8 +138,8 @@ function Reset(level : int) {
 	controller.transform.position.x = targetX;
 	controller.transform.position.y = targetY;
 	controller.transform.position.z = -1;
-	controller.transform.localScale.x = BRICK_SIZE * 5;
-	controller.transform.localScale.y = BRICK_SIZE * 5;
+	controller.transform.localScale.x = BRICK_SIZE * 1.2;
+	controller.transform.localScale.y = BRICK_SIZE * 1.2;
 	
 	lastMouseX = -1;
 	lastMouseY = -1;
@@ -167,8 +168,8 @@ function CreateBall(x, y) {
 	ball.transform.position.x = x;
 	ball.transform.position.y = y;
 	ball.transform.position.z = -1;
-	ball.transform.localScale.x = BRICK_SIZE * 2.5;
-	ball.transform.localScale.y = BRICK_SIZE * 2.5;
+	ball.transform.localScale.x = BRICK_SIZE * 0.6;
+	ball.transform.localScale.y = BRICK_SIZE * 0.6;
 	
 	ball.GetComponent(SCR_Ball).Reset();
 	ball.SetActive(true);
@@ -188,14 +189,37 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 		bricks.Push (brick);
 	}
 	
-	var padding = BRICK_SIZE * 0.1;
-	brick.transform.localScale.x = w * BRICK_SIZE;
-	brick.transform.localScale.y = h * BRICK_SIZE;
-	brick.transform.GetChild(0).transform.localScale.x = 1 - padding / (w * BRICK_SIZE);
-	brick.transform.GetChild(0).transform.localScale.y = 1 - padding / (h * BRICK_SIZE);
-	brick.transform.position.x = (x + w * 0.5) * BRICK_SIZE;
-	brick.transform.position.y = (y + h * 0.5) * BRICK_SIZE;
+	var BRICK_SCALE = 0.5;
 	
+	var padding = BRICK_SIZE * 0.1;
+	var scale = w >= h ? w : h;
+	scale -= 2;
+	var rotate = h > w;
+		
+	brick.transform.transform.localScale.x = BRICK_SIZE * BRICK_SCALE;
+	brick.transform.transform.localScale.y = BRICK_SIZE * BRICK_SCALE;
+	
+	if (rotate) {
+		brick.transform.eulerAngles.z = 90;
+		brick.transform.position.x = (x + 0.5) * BRICK_SIZE;
+		brick.transform.position.y = (y + (scale + 2) * 0.5) * BRICK_SIZE;
+	}
+	else {
+		brick.transform.eulerAngles.z = 0;
+		brick.transform.position.x = (x + (scale + 2) * 0.5) * BRICK_SIZE;
+		brick.transform.position.y = (y + 0.5) * BRICK_SIZE;
+	}
+	
+	brick.transform.GetChild(1).transform.localScale.x = scale;
+	brick.transform.GetChild(0).transform.localPosition.x = -(scale + 1.1);
+	brick.transform.GetChild(2).transform.localPosition.x = (scale + 1.1);
+	
+	brick.transform.GetChild(4).transform.localScale.x = scale;
+	brick.transform.GetChild(3).transform.localPosition.x = -(scale + 1);
+	brick.transform.GetChild(5).transform.localPosition.x = (scale + 1);
+	
+	brick.transform.GetComponent(BoxCollider2D).size.x = (scale + 2) * 2;
+
 	var destructible = false;
 	if (hp > 0) {
 		destructible = true;
@@ -206,9 +230,19 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 	
 	if (destructible) {
 		brick.transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[color];
+		brick.transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[color];
+		brick.transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[color];
+		brick.transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_WHITE;
+		brick.transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_WHITE;
+		brick.transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_WHITE;
 	}
 	else {
 		brick.transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		brick.transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		brick.transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		brick.transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		brick.transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		brick.transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 	}
 	
 	brick.SetActive(true);
@@ -298,6 +332,11 @@ function CreateMapFillRow(level:int, row:int) {
 	if (row == 0 || row == BRICK_H-1) {
 		(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetDestructible (false);
 		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 	}
 }
 
@@ -345,6 +384,11 @@ function CreateMapFillColumn(level:int, col:int) {
 	if (col == 0 || col == BRICK_W - 1) {
 		(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetDestructible(false);
 		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 	}
 }
 
