@@ -16,7 +16,9 @@ static var BRICK_SIZE : int = 40;
 static var BRICK_W : int = 0;
 static var BRICK_H : int = 0;
 
-static var BACKGROUND_SIZE : int = 100;
+static var BACKGROUND_SIZE : float = 100.0;
+static var BACKGROUND_X : float = 0.0;
+static var BACKGROUND_Y : float = 0.0;
 static var BACKGROUND_W : int = 0;
 static var BACKGROUND_H : int = 0;
 
@@ -62,8 +64,6 @@ function Start() {
 		Camera.main.transform.position.y = 500 * screenRatio;
 		BRICK_W = 1000 / BRICK_SIZE;
 		BRICK_H = BRICK_W * screenRatio;
-		BACKGROUND_W = 1000 / BACKGROUND_SIZE;
-		BACKGROUND_H = BACKGROUND_W * screenRatio;
 		SCR_Ball.RIGHT_EDGE = 1000;
 		SCR_Ball.TOP_EDGE = 1000 * screenRatio;
 	}
@@ -72,8 +72,6 @@ function Start() {
 		Camera.main.transform.position.y = 500;
 		BRICK_H = 1000 / BRICK_SIZE;
 		BRICK_W = BRICK_H * screenRatio;
-		BACKGROUND_H = 1000 / BACKGROUND_SIZE;
-		BACKGROUND_W = BACKGROUND_H * screenRatio;
 		SCR_Ball.RIGHT_EDGE = 1000 * screenRatio;
 		SCR_Ball.TOP_EDGE = 1000;
 	}
@@ -82,6 +80,32 @@ function Start() {
 	score.transform.position.x = Camera.main.transform.position.x;
 	score.transform.position.y = Camera.main.transform.position.y;
 	
+	var controlZoneMargin = SCR_Controller.CONTROL_ZONE_MARGIN;
+	SCR_Controller.CONTROL_ZONE_X = controlZoneMargin * BRICK_SIZE;
+	SCR_Controller.CONTROL_ZONE_Y = controlZoneMargin * BRICK_SIZE;
+	SCR_Controller.CONTROL_ZONE_W = (BRICK_W - 2 * controlZoneMargin) * BRICK_SIZE;
+	SCR_Controller.CONTROL_ZONE_H = (BRICK_H - 2 * controlZoneMargin) * BRICK_SIZE;
+	
+	if (verticalScreen) {
+		BACKGROUND_SIZE = 1.0 * SCR_Controller.CONTROL_ZONE_W / 6;
+		BACKGROUND_W = Mathf.Ceil(1000 / BACKGROUND_SIZE);
+		BACKGROUND_H = Mathf.Ceil(BACKGROUND_W * screenRatio);
+		SCR_Controller.CONTROL_ZONE_H = Mathf.Floor(SCR_Controller.CONTROL_ZONE_H / BACKGROUND_SIZE) * BACKGROUND_SIZE;
+		SCR_Controller.CONTROL_ZONE_Y = (BRICK_H * BRICK_SIZE - SCR_Controller.CONTROL_ZONE_H) / 2;
+	}
+	else {
+		BACKGROUND_SIZE = 1.0 * SCR_Controller.CONTROL_ZONE_H / 6;
+		BACKGROUND_H = Mathf.Ceil(1000 / BACKGROUND_SIZE);
+		BACKGROUND_W = Mathf.Ceil(BACKGROUND_H * screenRatio);
+		SCR_Controller.CONTROL_ZONE_W = Mathf.Floor(SCR_Controller.CONTROL_ZONE_W / BACKGROUND_SIZE) * BACKGROUND_SIZE;
+		SCR_Controller.CONTROL_ZONE_X = (BRICK_W * BRICK_SIZE - SCR_Controller.CONTROL_ZONE_W) / 2;
+		
+	}
+	
+	BACKGROUND_X = SCR_Controller.CONTROL_ZONE_X - (Mathf.Ceil(SCR_Controller.CONTROL_ZONE_X / BACKGROUND_SIZE)) * BACKGROUND_SIZE;
+	BACKGROUND_Y = SCR_Controller.CONTROL_ZONE_Y - (Mathf.Ceil(SCR_Controller.CONTROL_ZONE_Y / BACKGROUND_SIZE)) * BACKGROUND_SIZE;
+
+	
 	var BACKGROUND_SCALE = 0.5;
 	for (var i:int=0; i<BACKGROUND_W; i++) {
 		var temp : Array = new Array();
@@ -89,8 +113,8 @@ function Start() {
 			temp[j] = Instantiate(PREFAB_BACKGROUND);
 			(temp[j] as GameObject).transform.localScale.x = BACKGROUND_SIZE * BACKGROUND_SCALE;
 			(temp[j] as GameObject).transform.localScale.y = BACKGROUND_SIZE * BACKGROUND_SCALE;
-			(temp[j] as GameObject).transform.position.x = (i + 0.5) * BACKGROUND_SIZE;
-			(temp[j] as GameObject).transform.position.y = (j + 0.5) * BACKGROUND_SIZE;
+			(temp[j] as GameObject).transform.position.x = (i + 0.5) * BACKGROUND_SIZE + BACKGROUND_X;
+			(temp[j] as GameObject).transform.position.y = (j + 0.5) * BACKGROUND_SIZE + BACKGROUND_Y;
 			
 			
 			var texture = Random.Range(0, TEX_BACKGROUND.length - 1);
@@ -189,7 +213,7 @@ function Reset(level : int) {
 	
 	
 	if (firstTime) {
-		//CreateControlZone();
+		CreateControlZone();
 		firstTime = false;
 	}
 }
@@ -437,19 +461,12 @@ function CreateMapFillColumn(level:int, col:int) {
 }
 
 function CreateControlZone() {
-	var margin = SCR_Controller.CONTROL_ZONE_MARGIN;
-	
-	var x = margin * BRICK_SIZE;
-	var y = margin * BRICK_SIZE;
-	var w = (BRICK_W - 2 * margin) * BRICK_SIZE;
-	var h = (BRICK_H - 2 * margin) * BRICK_SIZE;
-	
 	var zone = Instantiate(PREFAB_CONTROL_ZONE);
 	
-	zone.transform.localScale.x = w;
-	zone.transform.localScale.y = h;
-	zone.transform.position.x = x + w * 0.5;
-	zone.transform.position.y = y + h * 0.5;
+	zone.transform.localScale.x = SCR_Controller.CONTROL_ZONE_W;
+	zone.transform.localScale.y = SCR_Controller.CONTROL_ZONE_H;
+	zone.transform.position.x = SCR_Controller.CONTROL_ZONE_X + SCR_Controller.CONTROL_ZONE_W * 0.5;
+	zone.transform.position.y = SCR_Controller.CONTROL_ZONE_Y + SCR_Controller.CONTROL_ZONE_H * 0.5;
 }
 
 static function GetControlZone() {
@@ -573,7 +590,7 @@ static function Lose (reason) {
 			LOSE_TEXT.text = "You lose your ball!";
 		}
 		else if (reason == 1) {
-			LOSE_TEXT.text = "Hey, your ball seems stuck!";
+			LOSE_TEXT.text = "Your ball stuck!";
 		}
 		TAP_TEXT.enabled = true;
 		TAP_TEXT.text = "Tap to reset!";

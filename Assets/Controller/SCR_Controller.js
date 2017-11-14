@@ -1,4 +1,8 @@
 static var CONTROL_ZONE_MARGIN = 6;
+static var CONTROL_ZONE_X = 0;
+static var CONTROL_ZONE_Y = 0;
+static var CONTROL_ZONE_W = 0;
+static var CONTROL_ZONE_H = 0;
 
 private var SPEED_MULTIPLIER = 40;
 private var MIN_SPEED = 50;
