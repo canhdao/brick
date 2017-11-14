@@ -7,6 +7,8 @@ private var HP:int = 1;
 private var blinkCooldown:float = 0;
 private var currentMaterial:Material = null;
 
+private static var score:SCR_Score = null;
+
 function SetDestructible(d) {
 	destructible = d;
 	blinkCooldown = 0;
@@ -20,7 +22,9 @@ function IsDestructible() {
 }
 
 function Start() {
-	
+	if (score == null) {
+		score = GameObject.Find("Score").GetComponent(SCR_Score);
+	}
 }
 
 function Update() {
@@ -53,5 +57,7 @@ function Hit(damage:int) {
 		if (HP <= 0) {
 			gameObject.SetActive(false);
 		}
+		
+		score.IncreaseScore();
 	}
 }

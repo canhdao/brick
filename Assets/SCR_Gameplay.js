@@ -66,6 +66,10 @@ function Start() {
 	}
 	
 	
+	var score = GameObject.Find("Score");
+	score.transform.position.x = Camera.main.transform.position.x;
+	score.transform.position.y = Camera.main.transform.position.y;
+	
 	
 	LOSE_TEXT = GameObject.Find("LoseText").GetComponent(UI.Text);
 	TAP_TEXT = GameObject.Find("TapText").GetComponent(UI.Text);
@@ -490,6 +494,8 @@ function Update() {
 		LOSE_TEXT.enabled = false;
 		TAP_TEXT.enabled = false;
 		tapToReset = false;
+		
+		GameObject.Find("Score").GetComponent(SCR_Score).ResetScore();
 	}
 }
 
