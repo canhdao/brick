@@ -12,7 +12,7 @@ function SetColor (mat:Material, count:float) {
 
 function Update() {
 	var dt = Time.deltaTime;
-	for (var i=0; i<countDown.length; i++) {
+	for (var i=countDown.length-1; i>=0; i--) {
 		var count:float = countDown[i];
 		if (count > 0) {
 			count -= dt;
