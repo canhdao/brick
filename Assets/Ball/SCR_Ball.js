@@ -1,3 +1,4 @@
+var MAT_BRICK : Material[];
 var MAT_WHITE : Material;
 
 private static var controller : GameObject = null;
@@ -9,6 +10,7 @@ static var TOP_EDGE = 1000;
 private var background : Array = null;
 private var stuck = false;
 private var touchCooldown: float = 0;
+private var color:int = 0;
 
 function Start() {
 	if (controller == null) {
@@ -18,6 +20,9 @@ function Start() {
 
 function Reset() {
 	stuck = false;
+	
+	color = Random.Range(1, MAT_BRICK.length);
+	gameObject.GetComponent(Renderer).sharedMaterial = MAT_BRICK[color];
 }
 
 function SetBackground(bg:Array) {
@@ -82,8 +87,11 @@ function OnCollisionEnter2D(collision: Collision2D) {
 					((background[i] as Array)[j] as GameObject).GetComponent(SCR_Background).SetColor(mat, ((background[i] as Array).length - j + i) * 0.02);
 				}
 			}
+			collision.gameObject.GetComponent(SCR_Brick).Hit(1, color);
 		}
-		collision.gameObject.GetComponent(SCR_Brick).Hit(1);
+		
+		color = Random.Range(1, MAT_BRICK.length);
+		gameObject.GetComponent(Renderer).sharedMaterial = MAT_BRICK[color];
 	}
 	
 	if (GetComponent(Rigidbody2D).velocity.sqrMagnitude > MAX_VELOCITY * MAX_VELOCITY) {

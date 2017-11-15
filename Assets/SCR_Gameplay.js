@@ -303,6 +303,7 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 		brick.transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_WHITE;
 		brick.transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_WHITE;
 		brick.transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_WHITE;
+		brick.GetComponent(SCR_Brick).SetColor(color);
 	}
 	else {
 		brick.transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
@@ -311,7 +312,10 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 		brick.transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 		brick.transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 		brick.transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		brick.GetComponent(SCR_Brick).SetColor(0);
 	}
+	
+	
 	
 	brick.SetActive(true);
 	return brick;
@@ -422,6 +426,7 @@ function CreateMapFillRow(level:int, row:int) {
 			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetColor(0);
 		}
 	}
 }
@@ -479,6 +484,7 @@ function CreateMapFillColumn(level:int, col:int) {
 			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
 			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetColor(0);
 		}
 	}
 }

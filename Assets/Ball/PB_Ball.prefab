@@ -119,6 +119,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d46862ebf81984e971238201a66499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MAT_BRICK:
+  - {fileID: 2100000, guid: f9e7a0c2e3d45bd4d9dd37086a6c751b, type: 2}
+  - {fileID: 2100000, guid: 4eb236c262a180246b93a729fd906efb, type: 2}
+  - {fileID: 2100000, guid: 7ba55667490e2014f9ee8497eb49555c, type: 2}
+  - {fileID: 2100000, guid: 322c036422959d545a7689d08edf6bd0, type: 2}
+  - {fileID: 2100000, guid: b618ad35688929a4488628d5e0597202, type: 2}
+  - {fileID: 2100000, guid: fdc350d2b1e0a9f47b03fa7bd72a616e, type: 2}
   MAT_WHITE: {fileID: 2100000, guid: 19e2da416ccca1f4c856b0362e3401e8, type: 2}
 --- !u!212 &212125271428905568
 SpriteRenderer:
@@ -178,7 +185,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 5be794814e92135498089f9e5e6609a4, type: 2}
+  - {fileID: 2100000, guid: b618ad35688929a4488628d5e0597202, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
