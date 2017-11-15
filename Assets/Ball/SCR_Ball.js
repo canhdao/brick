@@ -8,6 +8,7 @@ static var TOP_EDGE = 1000;
 
 private var background : Array = null;
 private var stuck = false;
+private var touchCooldown: float = 0;
 
 function Start() {
 	if (controller == null) {
@@ -29,6 +30,9 @@ function IsStuck() {
 
 function Update() {
 	var dt = Time.deltaTime;
+	if (touchCooldown > 0) {
+		touchCooldown -= dt;
+	}
 	if (transform.position.x < 0 || transform.position.x > RIGHT_EDGE
 	||  transform.position.y < 0 || transform.position.y > TOP_EDGE) {
 		SCR_Gameplay.Lose(0);
@@ -63,7 +67,12 @@ function Update() {
 
 function OnCollisionEnter2D(collision: Collision2D) {
 	if (collision.gameObject.tag == "Controller") {
-		
+		if (SCR_Global.gameMode == GameMode.PUZZLE) {
+			if (touchCooldown <= 0) {
+				GameObject.Find("Score").GetComponent(SCR_Score).DecreaseScore(1);
+				touchCooldown = 0.1;
+			}
+		}
 	}
 	else if (collision.gameObject.tag == "Brick") {
 		if (collision.gameObject.GetComponent(SCR_Brick).IsDestructible()) {

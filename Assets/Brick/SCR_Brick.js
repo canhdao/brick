@@ -58,6 +58,8 @@ function Hit(damage:int) {
 			gameObject.SetActive(false);
 		}
 		
-		score.IncreaseScore();
+		if (SCR_Global.gameMode == GameMode.CLASSIC) {
+			score.IncreaseScore(1);
+		}
 	}
 }

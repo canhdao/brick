@@ -9,7 +9,18 @@ function ResetScore() {
 	GetComponent(TextMesh).text = score.ToString();
 }
 
-function IncreaseScore() {
-	score++;
+function IncreaseScore(amount:int) {
+	score += amount;
+	
 	GetComponent(TextMesh).text = score.ToString();
+}
+
+function DecreaseScore(amount:int) {
+	score -= amount;
+	
+	GetComponent(TextMesh).text = score.ToString();
+	
+	if (score < 0) {
+		SCR_Gameplay.Lose(2);
+	}
 }

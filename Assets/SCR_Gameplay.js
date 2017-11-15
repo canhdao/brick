@@ -354,6 +354,19 @@ function CreateMap(level : int){
 	CreateMapFillColumn (level, BRICK_W - 1);
 	CreateMapFillColumn (level, BRICK_W - 2);
 	CreateMapFillColumn (level, BRICK_W - 3);
+	
+	
+	if (SCR_Global.gameMode == GameMode.PUZZLE) {
+		var numberOfTouch:float = 0.0;
+		for (var i=0; i<bricks.length; i++) {
+			if ((bricks[i] as GameObject).activeSelf == true) {
+				if ((bricks[i] as GameObject).GetComponent(SCR_Brick).IsDestructible()) {
+					numberOfTouch += 0.25 + currentLevel * 0.12;
+				}
+			}
+		}
+		GameObject.Find("Score").GetComponent(SCR_Score).IncreaseScore(Mathf.Ceil(numberOfTouch));
+	}
 }
 
 function CreateMapFillRow(level:int, row:int) {
@@ -381,30 +394,35 @@ function CreateMapFillRow(level:int, row:int) {
 		}
 		var length = Random.Range(BRICK_MIN_LENGTH, currentMaxLength);
 		
+		var brickHP = level;
 		if (row == 0 || row == BRICK_H-1) {
-			if (Random.Range(0, 1) == 1) {
-				color = 0;
+			if (SCR_Global.gameMode == GameMode.PUZZLE) {
+				brickHP = 0;
 			}
 		}
 		
-		createdBrick.push (CreateBrick(index, row, length, 1, level, color));
+		if (SCR_Global.gameMode == GameMode.CLASSIC || Random.Range(0, 9) > 1 || row == 0 || row == BRICK_H-1) {
+			createdBrick.push (CreateBrick(index, row, length, 1, brickHP, color));
+		}
 		index += length;
 
 		if (maxW - index < BRICK_MAX_LENGTH) {
 			color = Random.Range(1, MAT_BRICK.length);
-			createdBrick.push (CreateBrick(index, row, maxW - index, 1, level, color));
+			createdBrick.push (CreateBrick(index, row, maxW - index, 1, brickHP, color));
 			finished = true;
 		}
 	}
 	
 	if (row == 0 || row == BRICK_H-1) {
-		(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetDestructible (false);
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		if (SCR_Global.gameMode == GameMode.CLASSIC) {
+			(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetDestructible (false);
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		}
 	}
 }
 
@@ -433,30 +451,35 @@ function CreateMapFillColumn(level:int, col:int) {
 		}
 		var length = Random.Range(BRICK_MIN_LENGTH, currentMaxLength);
 		
+		var brickHP = level;
 		if (col == 0 || col == BRICK_W - 1) {
-			if (Random.Range(0, 1) == 1) {
-				color = 0;
+			if (SCR_Global.gameMode == GameMode.PUZZLE) {
+				brickHP = 0;
 			}
 		}
 		
-		createdBrick.push(CreateBrick(col, index, 1, length, level, color));
+		if (SCR_Global.gameMode == GameMode.CLASSIC || Random.Range(0, 9) > 1 || col == 0 || col == BRICK_W - 1) {
+			createdBrick.push(CreateBrick(col, index, 1, length, brickHP, color));
+		}
 		index += length;
 		
 		if (maxH - index < BRICK_MAX_LENGTH) {
 			color = Random.Range(1, MAT_BRICK.length);
-			createdBrick.push(CreateBrick(col, index, 1, maxH - index, level, color));
+			createdBrick.push(CreateBrick(col, index, 1, maxH - index, brickHP, color));
 			finished = true;
 		}
 	}
 	
 	if (col == 0 || col == BRICK_W - 1) {
-		(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetDestructible(false);
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
-		(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		if (SCR_Global.gameMode == GameMode.CLASSIC) {
+			(createdBrick[createdBrick.length >> 1] as GameObject).GetComponent(SCR_Brick).SetDestructible(false);
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(0).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(1).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(2).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(3).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(4).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+			(createdBrick[createdBrick.length >> 1] as GameObject).transform.GetChild(5).GetComponent(Renderer).sharedMaterial = MAT_BRICK[0];
+		}
 	}
 }
 
@@ -541,14 +564,14 @@ function Update() {
 	
 	if (tapToReset == true && Input.GetMouseButtonDown(0)) {
 		if (tapNextLevel) {
+			GameObject.Find("Score").GetComponent(SCR_Score).ResetScore();
+			
 			currentLevel ++;
 			Reset(currentLevel);
 			
 			LOSE_TEXT.enabled = false;
 			TAP_TEXT.enabled = false;
 			tapToReset = false;
-			
-			GameObject.Find("Score").GetComponent(SCR_Score).ResetScore();
 		}
 		else {
 			SceneManagement.SceneManager.LoadScene("MainMenu");
@@ -591,6 +614,9 @@ static function Lose (reason) {
 		}
 		else if (reason == 1) {
 			LOSE_TEXT.text = "Your ball stuck!";
+		}
+		else if (reason == 2) {
+			LOSE_TEXT.text = "No more touch!";
 		}
 		TAP_TEXT.enabled = true;
 		TAP_TEXT.text = "Tap to reset!";
