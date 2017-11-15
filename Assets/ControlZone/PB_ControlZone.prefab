@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4997833770703172}
   - component: {fileID: 33578217462554500}
   - component: {fileID: 23227376605152176}
-  - component: {fileID: 114740948392948356}
   m_Layer: 0
   m_Name: PB_ControlZone
   m_TagString: Untagged
@@ -83,15 +82,3 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1169695615125408}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114740948392948356
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1169695615125408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 847c2d92d3188b8478dae0b85c6a6267, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WHITE_MATERIAL: {fileID: 0}

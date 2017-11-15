@@ -141,7 +141,7 @@ function Start() {
 function Reset(level : int) {
 	for (var i:int=0; i<BACKGROUND_W; i++) {
 		for (var j:int=0; j<BACKGROUND_H; j++) {
-			((background[i] as Array)[j] as GameObject).GetComponent(SCR_Background).SetColor(MAT_WHITE, ((background[i] as Array).length - j + i) * 0.02);
+			((background[i] as Array)[j] as GameObject).GetComponent(SCR_Background).SetColor(MAT_BRICK[0], ((background[i] as Array).length - j + i) * 0.02);
 		}
 	}
 	
