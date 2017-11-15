@@ -1,5 +1,7 @@
-var MAT_BRICK : Material[];
-var MAT_WHITE : Material;
+public var MAT_BRICK : Material[];
+public var MAT_WHITE : Material;
+public var PREFAB_SPARKLE_CONTROLLER : GameObject;
+public var PREFAB_SPARKLE_BRICK : GameObject;
 
 private static var controller : GameObject = null;
 
@@ -71,6 +73,10 @@ function Update() {
 }
 
 function OnCollisionEnter2D(collision: Collision2D) {
+	var contacts : ContactPoint2D[] = new ContactPoint2D[1];
+	collision.GetContacts(contacts);
+	var position = Vector3(contacts[0].point.x, contacts[0].point.y, -5);
+	
 	if (collision.gameObject.tag == "Controller") {
 		if (SCR_Global.gameMode == GameMode.PUZZLE) {
 			if (touchCooldown <= 0) {
@@ -78,8 +84,37 @@ function OnCollisionEnter2D(collision: Collision2D) {
 				touchCooldown = 0.1;
 			}
 		}
+		// Sparkle effect
+		var sparkleController = Instantiate(PREFAB_SPARKLE_CONTROLLER, position, PREFAB_SPARKLE_CONTROLLER.transform.rotation);
 	}
 	else if (collision.gameObject.tag == "Brick") {
+		// Sparkle effect
+		var sparkleBrick = Instantiate(PREFAB_SPARKLE_BRICK, position, PREFAB_SPARKLE_BRICK.transform.rotation);
+		var col = collision.transform.GetChild(0).GetComponent(SpriteRenderer).material.color;
+		sparkleBrick.GetComponent(ParticleSystemRenderer).material.SetColor("_TintColor", col);
+		if (collision.transform.eulerAngles.z < 45) {
+			// Horizontal brick
+			if (collision.transform.position.y > transform.position.y) {
+				// Top brick
+				sparkleBrick.transform.eulerAngles.z = 180;
+			}
+			else {
+				// Bottom brick
+				sparkleBrick.transform.eulerAngles.z = 0;
+			}
+		}
+		else {
+			// Verticle brick
+			if (collision.transform.position.x < transform.position.x) {
+				// Left brick
+				sparkleBrick.transform.eulerAngles.z = 270;
+			}
+			else {
+				// Right brick
+				sparkleBrick.transform.eulerAngles.z = 90;
+			}
+		}
+		
 		if (collision.gameObject.GetComponent(SCR_Brick).IsDestructible()) {
 			var mat:Material = collision.gameObject.transform.GetChild(0).GetComponent(Renderer).material;
 			for (var i=0; i<background.length; i++) {
