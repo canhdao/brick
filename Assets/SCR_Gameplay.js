@@ -76,10 +76,6 @@ function Start() {
 		SCR_Ball.TOP_EDGE = 1000;
 	}
 	
-	var score = GameObject.Find("Score");
-	score.transform.position.x = Camera.main.transform.position.x;
-	score.transform.position.y = Camera.main.transform.position.y;
-	
 	var controlZoneMargin = SCR_Controller.CONTROL_ZONE_MARGIN;
 	SCR_Controller.CONTROL_ZONE_X = controlZoneMargin * BRICK_SIZE;
 	SCR_Controller.CONTROL_ZONE_Y = controlZoneMargin * BRICK_SIZE;
