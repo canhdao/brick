@@ -1,12 +1,15 @@
 fileFormatVersion: 2
 guid: 0ac2bdb61eea0eb42afe3de82e07022d
-timeCreated: 1510543972
+timeCreated: 1510741601
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: Brick_0
     21300002: Brick_1
     21300004: Brick_2
+    21300006: TEX_Brick_0
+    21300008: TEX_Brick_1
+    21300010: TEX_Brick_2
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -99,13 +102,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Brick_0
+      name: TEX_Brick_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 200
-        height: 200
+        width: 300
+        height: 300
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -113,13 +116,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Brick_1
+      name: TEX_Brick_1
       rect:
         serializedVersion: 2
-        x: 200
+        x: 300
         y: 0
-        width: 200
-        height: 200
+        width: 300
+        height: 300
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -127,13 +130,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Brick_2
+      name: TEX_Brick_2
       rect:
         serializedVersion: 2
-        x: 400
+        x: 600
         y: 0
-        width: 200
-        height: 200
+        width: 300
+        height: 300
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

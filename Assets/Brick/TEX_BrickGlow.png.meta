@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: c537cb108f0a8314b8f79520604ff3d8
-timeCreated: 1510559647
+timeCreated: 1510741630
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -104,10 +104,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 220
-        height: 240
+        width: 300
+        height: 300
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -116,12 +116,12 @@ TextureImporter:
       name: TEX_BrickGlow_1
       rect:
         serializedVersion: 2
-        x: 220
+        x: 300
         y: 0
-        width: 200
-        height: 240
+        width: 300
+        height: 300
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -130,12 +130,12 @@ TextureImporter:
       name: TEX_BrickGlow_2
       rect:
         serializedVersion: 2
-        x: 420
+        x: 600
         y: 0
-        width: 220
-        height: 240
+        width: 300
+        height: 300
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

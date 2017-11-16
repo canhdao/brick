@@ -116,8 +116,11 @@ function Start() {
 			(temp[j] as GameObject).transform.position.x = (i + 0.5) * BACKGROUND_SIZE + BACKGROUND_X;
 			(temp[j] as GameObject).transform.position.y = (j + 0.5) * BACKGROUND_SIZE + BACKGROUND_Y;
 			
-			
-			var texture = Random.Range(0, TEX_BACKGROUND.length - 1);
+			var texture = Random.Range(2, TEX_BACKGROUND.length);
+			if ((temp[j] as GameObject).transform.position.x >= SCR_Controller.CONTROL_ZONE_X && (temp[j] as GameObject).transform.position.x <= SCR_Controller.CONTROL_ZONE_X + SCR_Controller.CONTROL_ZONE_W
+			&&  (temp[j] as GameObject).transform.position.y >= SCR_Controller.CONTROL_ZONE_Y && (temp[j] as GameObject).transform.position.y <= SCR_Controller.CONTROL_ZONE_Y + SCR_Controller.CONTROL_ZONE_H) {
+				texture = Random.Range(2, TEX_BACKGROUND.length);
+			}
 			(temp[j] as GameObject).GetComponent(SpriteRenderer).sprite = TEX_BACKGROUND[texture];
 		}
 		background[i] = temp;
@@ -257,7 +260,7 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 		bricks.Push (brick);
 	}
 	
-	var BRICK_SCALE = 0.5;
+	var BRICK_SCALE = 0.35;
 	
 	var padding = BRICK_SIZE * 0.1;
 	var scale = w >= h ? w : h;
@@ -279,12 +282,12 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 	}
 	
 	brick.transform.GetChild(1).transform.localScale.x = scale;
-	brick.transform.GetChild(0).transform.localPosition.x = -(scale + 1.1);
-	brick.transform.GetChild(2).transform.localPosition.x = (scale + 1.1);
+	brick.transform.GetChild(0).transform.localPosition.x = -(scale + 1) * 1.5;
+	brick.transform.GetChild(2).transform.localPosition.x = (scale + 1) * 1.5;
 	
 	brick.transform.GetChild(4).transform.localScale.x = scale;
-	brick.transform.GetChild(3).transform.localPosition.x = -(scale + 1);
-	brick.transform.GetChild(5).transform.localPosition.x = (scale + 1);
+	brick.transform.GetChild(3).transform.localPosition.x = -(scale + 1) * 1.5;
+	brick.transform.GetChild(5).transform.localPosition.x = (scale + 1) * 1.5;
 	
 	brick.transform.GetComponent(BoxCollider2D).size.x = (scale + 2) * 2;
 
@@ -496,17 +499,6 @@ function CreateControlZone() {
 	zone.transform.localScale.y = SCR_Controller.CONTROL_ZONE_H;
 	zone.transform.position.x = SCR_Controller.CONTROL_ZONE_X + SCR_Controller.CONTROL_ZONE_W * 0.5;
 	zone.transform.position.y = SCR_Controller.CONTROL_ZONE_Y + SCR_Controller.CONTROL_ZONE_H * 0.5;
-}
-
-static function GetControlZone() {
-	var margin = SCR_Controller.CONTROL_ZONE_MARGIN;
-	
-	var x = margin * BRICK_SIZE;
-	var y = margin * BRICK_SIZE;
-	var w = (BRICK_W - 2 * margin) * BRICK_SIZE;
-	var h = (BRICK_H - 2 * margin) * BRICK_SIZE;
-	
-	return [x, y, w, h];
 }
 
 function Update() {

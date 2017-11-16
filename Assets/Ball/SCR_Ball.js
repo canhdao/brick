@@ -52,12 +52,10 @@ function Update() {
 		var controllerRadius = controller.GetComponent(CircleCollider2D).radius * controller.transform.localScale.x;
 		var margin = ballRadius + controllerRadius;
 		
-		var zone = SCR_Gameplay.GetControlZone();
-		
-		var left = zone[0] - margin;
-		var right = zone[0] + zone[2] + margin;
-		var bottom = zone[1] - margin;
-		var top = zone[1] + zone[3] + margin;
+		var left = SCR_Controller.CONTROL_ZONE_X - margin;
+		var right = SCR_Controller.CONTROL_ZONE_X + SCR_Controller.CONTROL_ZONE_W + margin;
+		var bottom = SCR_Controller.CONTROL_ZONE_Y - margin;
+		var top = SCR_Controller.CONTROL_ZONE_Y + SCR_Controller.CONTROL_ZONE_H + margin;
 		
 		if (transform.position.x < left   || transform.position.x > right
 		||  transform.position.y < bottom || transform.position.y > top) {
