@@ -89,7 +89,7 @@ function OnCollisionEnter2D(collision: Collision2D) {
 		// Sparkle effect
 		var sparkleBrick = Instantiate(PREFAB_SPARKLE_BRICK, position, PREFAB_SPARKLE_BRICK.transform.rotation);
 		var col = collision.transform.GetChild(0).GetComponent(SpriteRenderer).material.color;
-		sparkleBrick.GetComponent(ParticleSystemRenderer).material.SetColor("_TintColor", col);
+		sparkleBrick.transform.GetChild(0).gameObject.GetComponent(ParticleSystemRenderer).material.SetColor("_TintColor", col);
 		if (collision.transform.eulerAngles.z < 45) {
 			// Horizontal brick
 			if (collision.transform.position.y > transform.position.y) {
