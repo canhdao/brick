@@ -14,6 +14,14 @@ private var stuck = false;
 private var touchCooldown: float = 0;
 private var color:int = 0;
 
+private static var controllerParticle = new Array();
+private static var brickParticle = new Array();
+
+static function ResetParticle() {
+	controllerParticle = new Array();
+	brickParticle = new Array();
+}
+
 function Start() {
 	if (controller == null) {
 		controller = GameObject.Find("Controller");
@@ -83,11 +91,39 @@ function OnCollisionEnter2D(collision: Collision2D) {
 			}
 		}
 		// Sparkle effect
-		var sparkleController = Instantiate(PREFAB_SPARKLE_CONTROLLER, position, PREFAB_SPARKLE_CONTROLLER.transform.rotation);
+		var sparkleController : GameObject = null;
+		for (var l = 0; l < controllerParticle.length; l++) {
+			if ((controllerParticle[l] as GameObject).activeSelf == false) {
+				sparkleController = controllerParticle[l];
+				sparkleController.SetActive(true);
+				sparkleController.transform.position = position;
+				break;
+			}
+		}
+		
+		if (sparkleController == null) {
+			sparkleController = Instantiate(PREFAB_SPARKLE_CONTROLLER, position, PREFAB_SPARKLE_CONTROLLER.transform.rotation);
+			controllerParticle.Push(sparkleController);
+		}
 	}
 	else if (collision.gameObject.tag == "Brick") {
 		// Sparkle effect
-		var sparkleBrick = Instantiate(PREFAB_SPARKLE_BRICK, position, PREFAB_SPARKLE_BRICK.transform.rotation);
+		var sparkleBrick : GameObject = null;
+		for (var k = 0; k < brickParticle.length; k++) {
+			if ((brickParticle[k] as GameObject).transform.GetChild(0).gameObject.activeSelf == false) {
+				sparkleBrick = brickParticle[k];
+				sparkleBrick.transform.GetChild(0).gameObject.SetActive(true);
+				sparkleBrick.transform.GetChild(1).gameObject.SetActive(true);
+				sparkleBrick.transform.position = position;
+				break;
+			}
+		}
+		
+		if (sparkleBrick == null) {
+			sparkleBrick = Instantiate(PREFAB_SPARKLE_BRICK, position, PREFAB_SPARKLE_BRICK.transform.rotation);
+			brickParticle.Push(sparkleBrick);
+		}
+
 		var col = collision.transform.GetChild(0).GetComponent(SpriteRenderer).material.color;
 		sparkleBrick.transform.GetChild(0).gameObject.GetComponent(ParticleSystemRenderer).material.SetColor("_TintColor", col);
 		if (collision.transform.eulerAngles.z < 45) {

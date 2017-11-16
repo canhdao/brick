@@ -200,6 +200,7 @@ function Reset(level : int) {
 	}
 	
 	SCR_Brick.ResetParticle();
+	SCR_Ball.ResetParticle();
 	
 	controller.GetComponent(SCR_Controller).SetTargetPosition (targetX, targetY);
 	controller.transform.position.x = targetX;
