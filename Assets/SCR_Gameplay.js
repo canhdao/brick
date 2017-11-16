@@ -199,6 +199,7 @@ function Reset(level : int) {
 		targetY = 500;
 	}
 	
+	SCR_Brick.ResetParticle();
 	
 	controller.GetComponent(SCR_Controller).SetTargetPosition (targetX, targetY);
 	controller.transform.position.x = targetX;
@@ -256,7 +257,7 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 		bricks.Push (brick);
 	}
 	
-	var BRICK_SCALE = 0.35;
+	var BRICK_SCALE:float = 1.0 / 3;
 	
 	var padding = BRICK_SIZE * 0.1;
 	var scale = w >= h ? w : h;
@@ -277,6 +278,8 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 		brick.transform.position.y = (y + 0.5) * BRICK_SIZE;
 	}
 	
+	brick.GetComponent(SCR_Brick).SetSize (w, h);
+	
 	brick.transform.GetChild(1).transform.localScale.x = scale;
 	brick.transform.GetChild(0).transform.localPosition.x = -(scale + 1) * 1.5;
 	brick.transform.GetChild(2).transform.localPosition.x = (scale + 1) * 1.5;
@@ -285,7 +288,7 @@ function CreateBrick (x:float, y:float, w:float, h:float, hp:int, color:int) {
 	brick.transform.GetChild(3).transform.localPosition.x = -(scale + 1) * 1.5;
 	brick.transform.GetChild(5).transform.localPosition.x = (scale + 1) * 1.5;
 	
-	brick.transform.GetComponent(BoxCollider2D).size.x = (scale + 2) * 2;
+	brick.transform.GetComponent(BoxCollider2D).size.x = (scale + 2) * 3;
 
 	var destructible = false;
 	if (hp > 0) {

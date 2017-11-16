@@ -1,7 +1,10 @@
-var MAT_WHITE : Material;
+public var MAT_WHITE : Material;
+public var PREFAB_SHATTER : GameObject;
 
 private var destructible:boolean = true;
 private var color:int = 0;
+private var width:int = 0;
+private var height:int = 0;
 
 private var HP:int = 1;
 private var blinkCooldown:float = 0;
@@ -9,9 +12,20 @@ private var currentMaterial:Material = null;
 
 private static var score:SCR_Score = null;
 
+private static var shatterParticle = new Array();
+
+static function ResetParticle() {
+	shatterParticle = new Array();
+}
+
 
 function SetColor (c) {
 	color = c;
+}
+
+function SetSize (w, h) {
+	width = w;
+	height = h;
 }
 
 function SetDestructible(d) {
@@ -61,6 +75,8 @@ function Hit(damage:int, ballColor:int) {
 		
 		if (HP <= 0) {
 			gameObject.SetActive(false);
+			
+			SpawnExplosion();
 		}
 		
 		if (SCR_Global.gameMode == GameMode.CLASSIC) {
@@ -75,4 +91,28 @@ function Hit(damage:int, ballColor:int) {
 			}
 		}
 	}
+}
+
+function SpawnExplosion() {
+	var particle : GameObject = null;
+	for (var i=0; i<shatterParticle.length; i++) {
+		if ((shatterParticle[i] as GameObject).activeSelf == false) {
+			particle = shatterParticle[i];
+			break;
+		}
+	}
+	
+	if (particle == null) {
+		particle = Instantiate(PREFAB_SHATTER);
+		shatterParticle.Push (particle);
+	}
+	
+	particle.transform.position.x = transform.position.x;
+	particle.transform.position.y = transform.position.y;
+	particle.transform.position.z = -5;
+	
+	var color = currentMaterial.color;
+	particle.GetComponent(ParticleSystemRenderer).material.SetColor("_TintColor", color);
+	particle.GetComponent(ParticleSystem).shape.scale = Vector3(width * 0.4, height * 0.4, 1);
+	particle.SetActive(true);
 }
